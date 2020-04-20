@@ -42,6 +42,7 @@ public class CacheConfiguration {
             createCache(cm, com.stockhub.app.domain.User.class.getName());
             createCache(cm, com.stockhub.app.domain.Authority.class.getName());
             createCache(cm, com.stockhub.app.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.stockhub.app.domain.Stock.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }
