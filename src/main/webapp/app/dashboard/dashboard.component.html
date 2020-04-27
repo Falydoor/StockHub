@@ -1,0 +1,101 @@
+<div class="row">
+    <div class="h3 col-12 text-center">
+        <select (change)="search()" [(ngModel)]="ticker">
+            <option *ngFor="let stock of stocks" [value]="stock.ticker">{{ stock.ticker }}</option>
+        </select>
+    </div>
+    <div class="h5 col-12 text-center">
+        <label for="contracts">Contracts</label>
+        <input id="contracts" style="width: 50px" type="number" min="1" step="1" [(ngModel)]="count"/>
+    </div>
+</div>
+<div class="row" *ngIf="dashboard && count">
+    <div class="col-6" *ngIf="dashboard.price">
+        <table class="table table-bordered table-hover table-sm">
+            <caption>Quote details</caption>
+            <tbody>
+            <tr>
+                <td>Long Name</td>
+                <td>{{dashboard.name}}</td>
+            </tr>
+            <tr>
+                <td>Last Price</td>
+                <td class="font-weight-bold">{{dashboard.price | currency}}</td>
+            </tr>
+            <tr>
+                <td>52 Week Low</td>
+                <td>{{dashboard.fiftyTwoWeekLow | currency}}</td>
+            </tr>
+            <tr>
+                <td>52 Week High</td>
+                <td>{{dashboard.fiftyTwoWeekHigh | currency}}</td>
+            </tr>
+            <tr>
+                <td>Total Cost</td>
+                <td class="font-weight-bold">{{(dashboard.price * count * 100) | currency:'':'$':'1.0-0'}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-6">
+        <table *ngIf="dashboard.dividends" class="table table-bordered table-hover table-sm">
+            <caption>Last year dividends</caption>
+            <tr>
+                <th>Date</th>
+                <th>Value</th>
+            </tr>
+            <tbody>
+            <tr *ngFor="let div of dashboard.dividends">
+                <td>{{div.Date}}</td>
+                <td>{{div.Dividends | currency}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row" *ngIf="dashboard && count">
+    <div class="col-4" *ngFor="let dashboardOption of dashboard.dashboardOptions">
+        <table class="table table-bordered table-hover table-sm">
+            <tr>
+                <td>Expiration</td>
+                <td>{{dashboardOption.expiration}}</td>
+            </tr>
+            <tr>
+                <td>Days</td>
+                <td>{{dashboardOption.expirationDays}}</td>
+            </tr>
+            <tr>
+                <td>Ratio (x5)</td>
+                <td class="font-weight-bold">{{5 * dashboardOption.options[0].profitPercent / dashboardOption.options[0].strikePercent | number:'1.2-2'}}</td>
+            </tr>
+        </table>
+        <table class="table table-bordered table-hover table-sm">
+            <thead>
+            <tr>
+                <th>Strike</th>
+                <th>Volume</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Div.</th>
+                <th>Ratio</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let option of dashboardOption.options">
+                <td>{{option.strike | currency}} <span
+                    class="font-weight-bold">(+{{option.strikePercent | percent:'1.2-2'}})</span></td>
+                <td>{{option.volume}}</td>
+                <td>{{option.strikePrice | currency}}</td>
+                <td>{{option.profit * count | currency}}</td>
+                <td>{{option.profitDiv * count | currency}}</td>
+                <td>{{option.profitPercent / option.strikePercent | number:'1.2-2'}}</td>
+                <td>
+                    {{option.profitTotal * count * 100 | currency:'':'$':'1.0-0'}}
+                    <span class="font-weight-bold">(+{{option.profitPercent | percent}})</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
