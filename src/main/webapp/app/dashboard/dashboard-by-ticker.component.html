@@ -16,7 +16,8 @@
             <tbody>
             <tr>
                 <td>Long Name</td>
-                <td>{{dashboard.name}}</td>
+                <td><a href="https://finance.yahoo.com/quote/{{dashboard.ticker}}"
+                       target="_blank">{{dashboard.name}}</a></td>
             </tr>
             <tr>
                 <td>Last Price</td>
@@ -54,7 +55,7 @@
     </div>
 </div>
 <div class="row" *ngIf="dashboard && count">
-    <div class="col-4" *ngFor="let dashboardOption of dashboard.dashboardOptions">
+    <div class="col-6" *ngFor="let dashboardOption of dashboard.dashboardOptions">
         <table class="table table-bordered table-hover table-sm">
             <tr>
                 <td>Expiration</td>
@@ -65,35 +66,43 @@
                 <td>{{dashboardOption.expirationDays}}</td>
             </tr>
             <tr>
-                <td>Ratio (x5)</td>
-                <td class="font-weight-bold">{{5 * dashboardOption.options[0].profitPercent / dashboardOption.options[0].strikePercent | number:'1.2-2'}}</td>
+                <td>
+                    {{dashboard.price * 1.05 | currency}} <span
+                    class="font-weight-bold">({{0.05 | percent:'1.2-2'}})</span>
+                </td>
+                <td>{{(dashboard.price * dashboardOption.calculatedPercentProfit * 100 * count) | currency:'':'$':'1.0-0'}}
+                    <span
+                        class="font-weight-bold">({{dashboardOption.calculatedPercentProfit | percent:'1.2-2'}})</span>
+                </td>
             </tr>
         </table>
         <table class="table table-bordered table-hover table-sm">
             <thead>
             <tr>
                 <th>Strike</th>
-                <th>Volume</th>
+                <th>Volume (OI)</th>
                 <th>Price</th>
                 <th>Stock</th>
                 <th>Div.</th>
-                <th>Ratio</th>
                 <th>Total</th>
+                <th>Delta (%)</th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let option of dashboardOption.options">
-                <td>{{option.strike | currency}} <span
-                    class="font-weight-bold">(+{{option.strikePercent | percent:'1.2-2'}})</span></td>
-                <td>{{option.volume}}</td>
+            <tr *ngFor="let option of dashboardOption.options; let i=index" [ngClass]="{
+                'table-success': -0.1 < option.strikePercent && option.strikePercent < 0.1,
+                'table-warning': -0.1 > option.strikePercent || option.strikePercent > 0.1,
+                'table-danger': -0.25 > option.strikePercent || option.strikePercent > 0.25}">
+                <td>{{option.strike | currency}} <span class="font-weight-bold"> ({{option.strikePercent | percent:'1.2-2'}})</span></td>
+                <td>{{option.volume}} ({{option.openInterest}})</td>
                 <td>{{option.strikePrice | currency}}</td>
                 <td>{{option.profit * count | currency}}</td>
                 <td>{{option.profitDiv * count | currency}}</td>
-                <td>{{option.profitPercent / option.strikePercent | number:'1.2-2'}}</td>
                 <td>
                     {{option.profitTotal * count * 100 | currency:'':'$':'1.0-0'}}
-                    <span class="font-weight-bold">(+{{option.profitPercent | percent}})</span>
+                    <span class="font-weight-bold"> ({{option.profitPercent | percent: '1.2-2'}})</span>
                 </td>
+                <td>{{i == 0 ? '-' : option.profitPercent - dashboardOption.options[i-1].profitPercent | percent: '1.2-2'}}</td>
             </tr>
             </tbody>
         </table>

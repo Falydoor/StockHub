@@ -1,6 +1,6 @@
 package com.stockhub.app.service.dto;
 
-public class DashboardOptionDTO {
+public class OptionWithProfitDTO {
     private double strike;
 
     private double strikePercent;
@@ -19,11 +19,13 @@ public class DashboardOptionDTO {
 
     private int volume;
 
+    private int openInterest;
+
     public double getStrike() {
         return strike;
     }
 
-    public DashboardOptionDTO strike(double strike) {
+    public OptionWithProfitDTO strike(double strike) {
         this.strike = strike;
         return this;
     }
@@ -32,7 +34,7 @@ public class DashboardOptionDTO {
         return strikePercent;
     }
 
-    public DashboardOptionDTO strikePercent(double strikePercent) {
+    public OptionWithProfitDTO strikePercent(double strikePercent) {
         this.strikePercent = strikePercent;
         return this;
     }
@@ -41,7 +43,7 @@ public class DashboardOptionDTO {
         return strikePrice;
     }
 
-    public DashboardOptionDTO strikePrice(double strikePrice) {
+    public OptionWithProfitDTO strikePrice(double strikePrice) {
         this.strikePrice = strikePrice;
         return this;
     }
@@ -50,7 +52,7 @@ public class DashboardOptionDTO {
         return price;
     }
 
-    public DashboardOptionDTO price(double price) {
+    public OptionWithProfitDTO price(double price) {
         this.price = price;
         return this;
     }
@@ -59,7 +61,7 @@ public class DashboardOptionDTO {
         return profit;
     }
 
-    public DashboardOptionDTO profit(double profit) {
+    public OptionWithProfitDTO profit(double profit) {
         this.profit = profit;
         return this;
     }
@@ -68,7 +70,7 @@ public class DashboardOptionDTO {
         return profitDiv;
     }
 
-    public DashboardOptionDTO profitDiv(double profitDiv) {
+    public OptionWithProfitDTO profitDiv(double profitDiv) {
         this.profitDiv = profitDiv;
         return this;
     }
@@ -77,7 +79,7 @@ public class DashboardOptionDTO {
         return profitTotal;
     }
 
-    public DashboardOptionDTO profitTotal(double profitTotal) {
+    public OptionWithProfitDTO profitTotal(double profitTotal) {
         this.profitTotal = profitTotal;
         return this;
     }
@@ -86,7 +88,7 @@ public class DashboardOptionDTO {
         return profitPercent;
     }
 
-    public DashboardOptionDTO profitPercent(double profitPercent) {
+    public OptionWithProfitDTO profitPercent(double profitPercent) {
         this.profitPercent = profitPercent;
         return this;
     }
@@ -95,23 +97,33 @@ public class DashboardOptionDTO {
         return volume;
     }
 
-    public DashboardOptionDTO volume(int volume) {
+    public OptionWithProfitDTO volume(int volume) {
         this.volume = volume;
+        return this;
+    }
+
+    public int getOpenInterest() {
+        return openInterest;
+    }
+
+    public OptionWithProfitDTO openInterest(int openInterest) {
+        this.openInterest = openInterest;
         return this;
     }
 
     @Override
     public String toString() {
-        return "DashboardOptionDTO{" +
-            "strike='" + strike + '\'' +
-            ", strikePercent='" + strikePercent + '\'' +
-            ", strikePrice='" + strikePrice + '\'' +
-            ", price='" + price + '\'' +
-            ", profit='" + profit + '\'' +
-            ", profitDiv='" + profitDiv + '\'' +
-            ", profitTotal='" + profitTotal + '\'' +
-            ", profitPercent='" + profitPercent + '\'' +
+        return "OptionWithProfitDTO{" +
+            "strike=" + strike +
+            ", strikePercent=" + strikePercent +
+            ", strikePrice=" + strikePrice +
+            ", price=" + price +
+            ", profit=" + profit +
+            ", profitDiv=" + profitDiv +
+            ", profitTotal=" + profitTotal +
+            ", profitPercent=" + profitPercent +
             ", volume=" + volume +
+            ", openInterest=" + openInterest +
             '}';
     }
 }

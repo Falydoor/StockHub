@@ -17,10 +17,18 @@
                 </a>
             </li>
             <li *ngSwitchCase="true" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                <a class="nav-link" routerLink="dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <a class="nav-link" routerLink="dashboardByTicker" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                     <span>
                         <fa-icon icon="chart-pie"></fa-icon>
-                        <span>Dashboard</span>
+                        <span>By Ticker</span>
+                    </span>
+                </a>
+            </li>
+            <li *ngSwitchCase="true" class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <a class="nav-link" routerLink="dashboardByExpiration" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    <span>
+                        <fa-icon icon="chart-pie"></fa-icon>
+                        <span>By Expiration</span>
                     </span>
                 </a>
             </li>

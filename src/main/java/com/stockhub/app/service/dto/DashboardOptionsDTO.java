@@ -8,9 +8,13 @@ public class DashboardOptionsDTO {
 
     private long expirationDays;
 
-    private List<DashboardOptionDTO> options;
+    private List<OptionWithProfitDTO> options;
 
     private boolean show;
+
+    private double calculatedPercentProfit;
+
+    private String ticker;
 
     public LocalDate getExpiration() {
         return expiration;
@@ -30,11 +34,11 @@ public class DashboardOptionsDTO {
         return this;
     }
 
-    public List<DashboardOptionDTO> getOptions() {
+    public List<OptionWithProfitDTO> getOptions() {
         return options;
     }
 
-    public DashboardOptionsDTO options(List<DashboardOptionDTO> options) {
+    public DashboardOptionsDTO options(List<OptionWithProfitDTO> options) {
         this.options = options;
         return this;
     }
@@ -48,6 +52,24 @@ public class DashboardOptionsDTO {
         return this;
     }
 
+    public double getCalculatedPercentProfit() {
+        return calculatedPercentProfit;
+    }
+
+    public DashboardOptionsDTO calculatedPercentProfit(double calculatedPercentProfit) {
+        this.calculatedPercentProfit = calculatedPercentProfit;
+        return this;
+    }
+
+    public String getTicker() {
+        return ticker;
+    }
+
+    public DashboardOptionsDTO ticker(String ticker) {
+        this.ticker = ticker;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "DashboardOptionsDTO{" +
@@ -55,6 +77,8 @@ public class DashboardOptionsDTO {
             ", expirationDays=" + expirationDays +
             ", options=" + options +
             ", show=" + show +
+            ", calculatedPercentProfit=" + calculatedPercentProfit +
+            ", ticker='" + ticker + '\'' +
             '}';
     }
 }

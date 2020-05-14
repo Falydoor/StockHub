@@ -2,7 +2,7 @@ package com.stockhub.app.service.dto;
 
 import java.util.List;
 
-public class DashboardDTO {
+public class DashboardByTickerDTO {
     private String ticker;
 
     private double price;
@@ -21,7 +21,7 @@ public class DashboardDTO {
         return ticker;
     }
 
-    public DashboardDTO ticker(String ticker) {
+    public DashboardByTickerDTO ticker(String ticker) {
         this.ticker = ticker;
         return this;
     }
@@ -30,7 +30,7 @@ public class DashboardDTO {
         return price;
     }
 
-    public DashboardDTO price(double price) {
+    public DashboardByTickerDTO price(double price) {
         this.price = price;
         return this;
     }
@@ -39,7 +39,7 @@ public class DashboardDTO {
         return dividends;
     }
 
-    public DashboardDTO dividends(List<DivDTO> dividends) {
+    public DashboardByTickerDTO dividends(List<DivDTO> dividends) {
         this.dividends = dividends;
         return this;
     }
@@ -48,7 +48,7 @@ public class DashboardDTO {
         return dashboardOptions;
     }
 
-    public DashboardDTO dashboardOptions(List<DashboardOptionsDTO> dashboardOptions) {
+    public DashboardByTickerDTO dashboardOptions(List<DashboardOptionsDTO> dashboardOptions) {
         this.dashboardOptions = dashboardOptions;
         return this;
     }
@@ -57,7 +57,7 @@ public class DashboardDTO {
         return fiftyTwoWeekLow;
     }
 
-    public DashboardDTO fiftyTwoWeekLow(double fiftyTwoWeekLow) {
+    public DashboardByTickerDTO fiftyTwoWeekLow(double fiftyTwoWeekLow) {
         this.fiftyTwoWeekLow = fiftyTwoWeekLow;
         return this;
     }
@@ -66,7 +66,7 @@ public class DashboardDTO {
         return fiftyTwoWeekHigh;
     }
 
-    public DashboardDTO fiftyTwoWeekHigh(double fiftyTwoWeekHigh) {
+    public DashboardByTickerDTO fiftyTwoWeekHigh(double fiftyTwoWeekHigh) {
         this.fiftyTwoWeekHigh = fiftyTwoWeekHigh;
         return this;
     }
@@ -75,7 +75,7 @@ public class DashboardDTO {
         return name;
     }
 
-    public DashboardDTO name(String name) {
+    public DashboardByTickerDTO name(String name) {
         this.name = name;
         return this;
     }

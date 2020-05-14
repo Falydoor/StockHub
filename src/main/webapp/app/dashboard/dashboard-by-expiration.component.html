@@ -1,0 +1,96 @@
+<div class="row">
+    <div class="h3 col-12 text-center">
+        <select (change)="search()" [(ngModel)]="expiration">
+            <option *ngFor="let expiration of expirations"
+                    [ngValue]="expiration">{{ expiration.date.format('YYYY-MM-DD') }} ({{expiration.days}} days)
+            </option>
+        </select>
+    </div>
+    <div class="h5 col-12 text-center">
+        <label for="contracts">Contracts</label>
+        <input id="contracts" style="width: 50px" type="number" min="1" step="1" [(ngModel)]="count"/>
+    </div>
+</div>
+<div class="row" *ngFor="let dashboard of dashboards">
+    <div class="col-12 text-center">
+        <h3>{{ expiration.date.format('YYYY-MM-DD') }} ({{expiration.days}} days)</h3>
+    </div>
+    <div class="col-6" *ngIf="count">
+        <table class="table table-bordered table-hover table-sm">
+            <caption>Quote details</caption>
+            <tbody>
+            <tr>
+                <td colspan="2" class="font-weight-bold text-center"><a
+                    href="https://finance.yahoo.com/quote/{{dashboard.ticker}}" target="_blank">{{dashboard.name}}
+                    ({{dashboard.ticker}})</a></td>
+            </tr>
+            <tr>
+                <td>Last Price</td>
+                <td class="font-weight-bold">{{dashboard.price | currency}}</td>
+            </tr>
+            <tr>
+                <td>52 Week Low</td>
+                <td>{{dashboard.fiftyTwoWeekLow | currency}}</td>
+            </tr>
+            <tr>
+                <td>52 Week High</td>
+                <td>{{dashboard.fiftyTwoWeekHigh | currency}}</td>
+            </tr>
+            <tr>
+                <td>Total Cost</td>
+                <td class="font-weight-bold">{{(dashboard.price * count * 100) | currency:'':'$':'1.0-0'}}</td>
+            </tr>
+            <tr>
+                <td>
+                    {{dashboard.price * 1.05 | currency}} <span
+                    class="font-weight-bold">({{0.05 | percent:'1.2-2'}})</span>
+                </td>
+                <td>{{(dashboard.price * dashboard.calculatedPercentProfit * 100 * count) | currency:'':'$':'1.0-0'}}
+                    <span
+                        class="font-weight-bold">({{dashboard.calculatedPercentProfit | percent:'1.2-2'}})</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="font-weight-bold text-center">Dividends</td>
+            </tr>
+            <tr *ngFor="let div of dashboard.dividends">
+                <td>{{div.Date}}</td>
+                <td>{{div.Dividends | currency}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-6">
+        <table class="table table-bordered table-hover table-sm" *ngIf="count">
+            <thead>
+            <tr>
+                <th>Strike</th>
+                <th>Strike (%)</th>
+                <th>Volume</th>
+                <th>Open Interest</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Div.</th>
+                <th>Total</th>
+                <th>Total (%)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let option of dashboard.options" [ngClass]="{
+                'table-success': -0.1 < option.strikePercent && option.strikePercent < 0.1,
+                'table-warning': -0.1 > option.strikePercent || option.strikePercent > 0.1,
+                'table-danger': -0.25 > option.strikePercent || option.strikePercent > 0.25}">
+                <td>{{option.strike | currency}}</td>
+                <td class="font-weight-bold">{{option.strikePercent | percent:'1.2-2'}}</td>
+                <td>{{option.volume}}</td>
+                <td>{{option.openInterest}}</td>
+                <td>{{option.strikePrice | currency}}</td>
+                <td>{{option.profit * count | currency}}</td>
+                <td>{{option.profitDiv * count | currency}}</td>
+                <td>{{option.profitTotal * count * 100 | currency:'':'$':'1.0-0'}}</td>
+                <td class="font-weight-bold">{{option.profitPercent | percent: '1.2-2'}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
