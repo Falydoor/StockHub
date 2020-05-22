@@ -31,6 +31,7 @@ public class OptionWithProfitDTO {
     }
 
     public double getStrikePercent() {
+        strikePercent = strike / price - 1;
         return strikePercent;
     }
 
@@ -58,6 +59,7 @@ public class OptionWithProfitDTO {
     }
 
     public double getProfit() {
+        profit = strike - price;
         return profit;
     }
 
@@ -76,6 +78,7 @@ public class OptionWithProfitDTO {
     }
 
     public double getProfitTotal() {
+        profitTotal = strikePrice + (strike - price) + profitDiv;
         return profitTotal;
     }
 
@@ -85,6 +88,7 @@ public class OptionWithProfitDTO {
     }
 
     public double getProfitPercent() {
+        profitPercent = (strikePrice + strike + profitDiv) / price - 1;
         return profitPercent;
     }
 
