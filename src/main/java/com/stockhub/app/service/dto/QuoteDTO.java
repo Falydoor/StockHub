@@ -3,6 +3,8 @@ package com.stockhub.app.service.dto;
 public class QuoteDTO {
     private double regularMarketPrice;
 
+    private double regularMarketChangePercent;
+
     private double fiftyTwoWeekHigh;
 
     private double fiftyTwoWeekLow;
@@ -15,6 +17,15 @@ public class QuoteDTO {
 
     public QuoteDTO regularMarketPrice(double regularMarketPrice) {
         this.regularMarketPrice = regularMarketPrice;
+        return this;
+    }
+
+    public double getRegularMarketChangePercent() {
+        return regularMarketChangePercent;
+    }
+
+    public QuoteDTO regularMarketChangePercent(double regularMarketChangePercent) {
+        this.regularMarketChangePercent = regularMarketChangePercent;
         return this;
     }
 
@@ -49,6 +60,7 @@ public class QuoteDTO {
     public String toString() {
         return "QuoteDTO{" +
             "regularMarketPrice=" + regularMarketPrice +
+            ", regularMarketChangePercent=" + regularMarketChangePercent +
             ", fiftyTwoWeekHigh=" + fiftyTwoWeekHigh +
             ", fiftyTwoWeekLow=" + fiftyTwoWeekLow +
             ", longName='" + longName + '\'' +

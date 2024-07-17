@@ -12,12 +12,15 @@ import com.stockhub.app.service.dto.YahooOptionsDTO;
 import com.stockhub.app.web.rest.errors.DashboardException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.LongStream;
 
@@ -27,16 +30,21 @@ public class YahooService {
 
     private final String URL = "https://query1.finance.yahoo.com/v7/finance";
 
+    private final String CRUMB = "sSmTHq81zy2";
+
     private final CsvSchema DIV_SCHEMA = CsvSchema.builder().addColumn("Date").addNumberColumn("Dividends").build().withColumnSeparator(',').withHeader();
 
     private final ObjectMapper objectMapper;
 
     private final CsvMapper csvMapper;
 
+    private final RestTemplate restTemplate;
+
     public YahooService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         this.csvMapper = new CsvMapper();
         this.csvMapper.registerModule(new JavaTimeModule());
+        this.restTemplate = new RestTemplate();
     }
 
     public LongStream getExpirations(String ticker) {
@@ -50,7 +58,8 @@ public class YahooService {
 
     public List<CallDTO> getCalls(String ticker, long expiration) {
         try {
-            return getResult(ticker, expiration).getOptions().get(0).getCalls();
+            List<YahooOptionsDTO.OptionChainDTO.ResultDTO.OptionDTO> options = getResult(ticker, expiration).getOptions();
+            return options.size() > 0 ? options.get(0).getCalls() : Collections.emptyList();
         } catch (IOException e) {
             log.error("Error while getting calls", e);
             throw new DashboardException("Unable to get calls");
@@ -79,10 +88,15 @@ public class YahooService {
 
     private MappingIterator<DivDTO> getDividends(String ticker, long startDate, long endDate) {
         try {
-            URL url = new URL(URL + "/download/" + ticker + "?period1=" + startDate + "&period2=" + endDate + "&interval=1d&events=div");
+            String url = URL + "/download/" + ticker + "?period1=" + startDate + "&period2=" + endDate + "&interval=1d&events=div&crumb=" + CRUMB;
             log.debug("DIVIDENDS URL => {}", url);
-            return csvMapper.readerFor(DivDTO.class).with(DIV_SCHEMA).readValues(url);
-        } catch (IOException e) {
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.COOKIE, new HttpCookie("B", "6rf4dq9ctf2gj&b=3&s=mh").toString());
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(headers), String.class);
+
+            return csvMapper.readerFor(DivDTO.class).with(DIV_SCHEMA).readValues(response.getBody());
+        } catch (IOException | HttpClientErrorException e) {
             log.error("Error while getting dividends", e);
             return MappingIterator.emptyIterator();
         }
@@ -94,10 +108,16 @@ public class YahooService {
 
     private YahooOptionsDTO.OptionChainDTO.ResultDTO getResult(String ticker, long expiration) throws IOException {
         String url = URL + "/options/" + ticker;
+        url += "?crumb=" + CRUMB;
         if (expiration > 0) {
-            url += "?date=" + expiration;
+            url += "&date=" + expiration;
         }
         log.debug("OPTIONS URL : {}", url);
-        return objectMapper.readValue(new URL(url), YahooOptionsDTO.class).getOptionChain().getResult().get(0);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, new HttpCookie("B", "6rf4dq9ctf2gj&b=3&s=mh").toString());
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(headers), String.class);
+
+        return objectMapper.readValue(response.getBody(), YahooOptionsDTO.class).getOptionChain().getResult().get(0);
     }
 }

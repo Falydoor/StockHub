@@ -5,6 +5,8 @@ import com.stockhub.app.repository.StockRepository;
 import com.stockhub.app.service.dto.*;
 import org.apache.commons.math3.fitting.PolynomialCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -14,6 +16,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -21,6 +26,10 @@ import static java.time.temporal.ChronoUnit.YEARS;
 
 @Service
 public class DashboardService {
+    private final Logger log = LoggerFactory.getLogger(DashboardService.class);
+
+    private final int LIMIT = 248;
+
     private final String DEFAULT_TICKER = "T";
 
     private final double STRIKE_PERCENT = 0.05;
@@ -29,9 +38,12 @@ public class DashboardService {
 
     private final StockRepository stockRepository;
 
+    private final AtomicInteger optionSize;
+
     public DashboardService(YahooService yahooService, StockRepository stockRepository) {
         this.yahooService = yahooService;
         this.stockRepository = stockRepository;
+        optionSize = new AtomicInteger();
     }
 
     public List<ExpirationDTO> getExpirations() {
@@ -60,15 +72,20 @@ public class DashboardService {
             .dividends(lastYearDividends);
     }
 
-    public List<DashboardByExpirationDTO> buildByExpiration(long expiration) {
-        return stockRepository.findAll()
-            .parallelStream()
-            .map(Stock::getTicker)
-            .map(ticker -> getOption(ticker, expiration, yahooService.getQuote(ticker).getRegularMarketPrice(), yahooService.getLastYearDividends(ticker)))
-            .filter(Objects::nonNull)
-            .map(this::getDashboardByExpiration)
-            .sorted(Comparator.comparingDouble(DashboardByExpirationDTO::getCalculatedPercentProfit).reversed())
-            .collect(Collectors.toList());
+    public List<DashboardByExpirationDTO> buildByExpiration(long expiration) throws ExecutionException, InterruptedException {
+        ForkJoinPool myPool = new ForkJoinPool(32);
+
+        return myPool.submit(() ->
+            stockRepository.findAll()
+                .parallelStream()
+                .limit(LIMIT)
+                .map(Stock::getTicker)
+                .map(ticker -> getOption(ticker, expiration, yahooService.getQuote(ticker).getRegularMarketPrice(), yahooService.getLastYearDividends(ticker)))
+                .filter(Objects::nonNull)
+                .map(this::getDashboardByExpiration)
+                .sorted(Comparator.comparingDouble(DashboardByExpirationDTO::getCalculatedPercentProfit).reversed())
+                .collect(Collectors.toList())
+        ).get();
     }
 
     private DashboardByExpirationDTO getDashboardByExpiration(DashboardOptionsDTO option) {
@@ -79,6 +96,7 @@ public class DashboardService {
             .fiftyTwoWeekLow(quote.getFiftyTwoWeekLow())
             .name(quote.getLongName())
             .price(quote.getRegularMarketPrice())
+            .priceChangePercent(quote.getRegularMarketChangePercent())
             .ticker(option.getTicker())
             .dividends(yahooService.getLastYearDividends(option.getTicker()))
             .calculatedPercentProfit(option.getCalculatedPercentProfit())
@@ -96,6 +114,12 @@ public class DashboardService {
         List<OptionWithProfitDTO> options = yahooService.getCalls(ticker, expiration).stream()
             .map(call -> buildDashboardOption(call, price, expirationDate, lastYearDividends))
             .collect(Collectors.toList());
+
+        int size = optionSize.incrementAndGet();
+        log.info("SIZE => {}/{} ({}%)", size, LIMIT, size * 100 / LIMIT);
+        if (size == LIMIT) {
+            optionSize.set(0);
+        }
 
         if (options.isEmpty()) {
             return null;

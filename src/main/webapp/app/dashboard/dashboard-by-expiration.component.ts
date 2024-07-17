@@ -26,7 +26,7 @@ export class DashboardByExpirationComponent implements OnInit {
             days: exp.expirationDays
           };
         });
-        this.expiration = this.expirations[1];
+        this.expiration = this.expirations[0];
         this.search();
       });
   }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -27,7 +28,7 @@ public class DashboardResource {
     }
 
     @GetMapping("/byExpiration")
-    public ResponseEntity<?> byExpiration(@RequestParam long expiration) {
+    public ResponseEntity<?> byExpiration(@RequestParam long expiration) throws ExecutionException, InterruptedException {
         return ResponseEntity.ok(dashboardService.buildByExpiration(expiration));
     }
 

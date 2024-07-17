@@ -29,6 +29,10 @@
                 <td class="font-weight-bold">{{dashboard.price | currency}}</td>
             </tr>
             <tr>
+                <td>Change (%)</td>
+                <td class="font-weight-bold">{{dashboard.priceChangePercent / 100 | percent:'1.2-2'}}</td>
+            </tr>
+            <tr>
                 <td>52 Week Low</td>
                 <td>{{dashboard.fiftyTwoWeekLow | currency}}</td>
             </tr>

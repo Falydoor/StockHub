@@ -18,6 +18,9 @@ logging:
     ROOT: DEBUG
     io.github.jhipster: DEBUG
     com.stockhub.app: DEBUG
+    sun.net.www.protocol.http: OFF
+    com.stockhub.app.service.YahooService: OFF
+    jdk.event.security: OFF
 
 spring:
   profiles:
@@ -67,6 +70,8 @@ spring:
 
 server:
   port: 8080
+  compression.enabled: true
+  undertow.no-request-timeout: 300
 
 # ===================================================================
 # JHipster specific properties

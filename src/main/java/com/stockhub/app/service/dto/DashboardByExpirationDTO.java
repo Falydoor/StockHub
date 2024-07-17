@@ -8,6 +8,8 @@ public class DashboardByExpirationDTO {
 
     private double price;
 
+    private double priceChangePercent;
+
     private List<DivDTO> dividends;
 
     private double fiftyTwoWeekLow;
@@ -41,6 +43,15 @@ public class DashboardByExpirationDTO {
 
     public DashboardByExpirationDTO price(double price) {
         this.price = price;
+        return this;
+    }
+
+    public double getPriceChangePercent() {
+        return priceChangePercent;
+    }
+
+    public DashboardByExpirationDTO priceChangePercent(double priceChangePercent) {
+        this.priceChangePercent = priceChangePercent;
         return this;
     }
 
@@ -130,6 +141,7 @@ public class DashboardByExpirationDTO {
         return "DashboardByExpirationDTO{" +
             "ticker='" + ticker + '\'' +
             ", price=" + price +
+            ", priceChangePercent=" + priceChangePercent +
             ", dividends=" + dividends +
             ", fiftyTwoWeekLow=" + fiftyTwoWeekLow +
             ", fiftyTwoWeekHigh=" + fiftyTwoWeekHigh +
